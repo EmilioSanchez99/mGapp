@@ -3,10 +3,10 @@ package com.example.mgapp.ui.components
 import androidx.compose.foundation.layout.*
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
-import Hotspot
-import androidx.compose.ui.Alignment
+import com.example.mgapp.domain.model.Hotspot
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -49,16 +49,24 @@ fun HotspotBottomSheet(
                 modifier = Modifier.fillMaxWidth()
             )
 
-            Spacer(Modifier.height(16.dp))
+            Spacer(Modifier.height(24.dp))
 
-            Button(
-                onClick = {
-                    onSave(hotspot.copy(name = name, description = description))
-                    onDismiss()
-                },
-                modifier = Modifier.align(Alignment.End)
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.End
             ) {
-                Text("Guardar")
+                TextButton(onClick = { onDismiss() }) {
+                    Text("Cancelar")
+                }
+                Spacer(Modifier.width(8.dp))
+                Button(
+                    onClick = {
+                        onSave(hotspot.copy(name = name, description = description))
+                        onDismiss()
+                    }
+                ) {
+                    Text("Guardar")
+                }
             }
         }
     }
