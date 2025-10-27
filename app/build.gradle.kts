@@ -77,6 +77,7 @@ dependencies {
     androidTestImplementation(platform(libs.androidx.compose.bom))
     androidTestImplementation(libs.androidx.ui.test.junit4)
 
+
     //  Nav
     implementation("androidx.navigation:navigation-compose:2.8.3")
 
@@ -98,4 +99,10 @@ dependencies {
 
     // DataStore
     implementation("androidx.datastore:datastore:1.1.1")
+
+    // Material Icons
+    implementation("androidx.compose.material:material-icons-extended:1.7.2")
+
+    implementation("androidx.lifecycle:lifecycle-viewmodel-ktx:2.8.4")
+
 }
