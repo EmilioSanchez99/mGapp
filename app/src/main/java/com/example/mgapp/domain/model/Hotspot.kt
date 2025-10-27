@@ -3,5 +3,5 @@ data class Hotspot(
     val x: Float,
     val y: Float,
     val name: String = "",
-    val data: String = ""
+    val description: String? = null
 )

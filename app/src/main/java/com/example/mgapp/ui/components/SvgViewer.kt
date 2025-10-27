@@ -40,14 +40,14 @@ fun SvgViewer(
     Box(
         modifier = Modifier
             .fillMaxSize()
-            // Zoom y pan
+            // Zoom and pan
             .pointerInput(Unit) {
                 detectTransformGestures { _, pan, zoom, _ ->
                     scale = (scale * zoom).coerceIn(1f, 5f)
                     offset += pan
                 }
             }
-            // Tap para crear hotspot
+            // create hotspot
             .pointerInput(Unit) {
                 detectTapGestures { tap ->
                     val correctedTap = Offset(
@@ -58,7 +58,7 @@ fun SvgViewer(
                 }
             }
     ) {
-        // Renderizar el SVG
+        // Render SVG
         AsyncImage(
             model = ImageRequest.Builder(LocalContext.current)
                 .data(svgPath)
@@ -73,7 +73,7 @@ fun SvgViewer(
             )
         )
 
-        // Dibujar hotspots
+        // draw hotspots
         hotspots.forEach { h ->
             Box(
                 modifier = Modifier
