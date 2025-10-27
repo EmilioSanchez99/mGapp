@@ -1,3 +1,6 @@
+package com.example.mgapp.domain.model
+
+
 data class Hotspot(
     val id: Long,
     val x: Float,
