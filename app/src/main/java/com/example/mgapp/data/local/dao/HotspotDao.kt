@@ -10,11 +10,18 @@ interface HotspotDao {
     fun getAll(): Flow<List<HotspotEntity>>
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    suspend fun insert(hotspot: HotspotEntity)
+    suspend fun insert(h: HotspotEntity)
+
+    @Update
+    suspend fun update(h: HotspotEntity)
 
     @Delete
-    suspend fun delete(hotspot: HotspotEntity)
+    suspend fun delete(h: HotspotEntity)
+
+    @Query("SELECT * FROM hotspots WHERE id = :id LIMIT 1")
+    suspend fun getById(id: String): HotspotEntity?
 
     @Query("DELETE FROM hotspots")
     suspend fun deleteAll()
+
 }

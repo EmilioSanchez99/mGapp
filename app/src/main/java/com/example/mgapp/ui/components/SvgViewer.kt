@@ -27,6 +27,7 @@ import kotlin.math.roundToInt
 fun SvgViewer(
     svgPath: String,
     hotspots: List<Hotspot>,
+    modifier: Modifier = Modifier,
     onTap: (Offset) -> Unit,
     onHotspotClick: (Hotspot) -> Unit
 ) {

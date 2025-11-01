@@ -4,19 +4,29 @@ import android.net.Uri
 import android.widget.Toast
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.filled.Redo
+import androidx.compose.material.icons.automirrored.filled.Undo
+import androidx.compose.material.icons.filled.Check
 import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material.icons.filled.Download
+import androidx.compose.material.icons.filled.Info
 import androidx.compose.material.icons.filled.Upload
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.example.mgapp.data.local.entity.HotspotEntity
+import com.example.mgapp.domain.HotspotChange
 import com.example.mgapp.domain.model.Hotspot
 import com.example.mgapp.ui.components.HotspotBottomSheet
 import com.example.mgapp.ui.components.SvgViewer
@@ -30,10 +40,22 @@ fun MainScreen(viewModel: HotspotViewModel = hiltViewModel()) {
     val hotspots = hotspotsFlow.value.map {
         Hotspot(it.id, it.x, it.y, it.name, it.description)
     }
+    val canUndo by viewModel.canUndo.collectAsState()
+    val canRedo by viewModel.canRedo.collectAsState()
 
     var pendingHotspot by remember { mutableStateOf<Hotspot?>(null) }
     var selectedHotspot by remember { mutableStateOf<Hotspot?>(null) }
     var showConfirmDialog by remember { mutableStateOf(false) }
+
+    // ✅ Snackbar para mensajes tipo “Saved”, “Undone”, etc.
+    val snackbarHostState = remember { SnackbarHostState() }
+
+    // Escuchar el flujo de mensajes del ViewModel
+    LaunchedEffect(Unit) {
+        viewModel.uiMessage.collect { msg ->
+            snackbarHostState.showSnackbar(message = msg)
+        }
+    }
 
     // 🔹 Launcher para elegir archivo JSON manualmente
     val importLauncher = rememberLauncherForActivityResult(
@@ -45,34 +67,84 @@ fun MainScreen(viewModel: HotspotViewModel = hiltViewModel()) {
             }
         }
     )
+    @Composable
+    fun CustomSnackbar(data: SnackbarData) {
+        val message = data.visuals.message.lowercase() // ✅ ahora sí está definida
+
+        val (icon, tint) = when {
+            "eliminado" in message -> Icons.Default.Delete to MaterialTheme.colorScheme.error
+            "saved" in message -> Icons.Default.Check to MaterialTheme.colorScheme.primary
+            "undo" in message -> Icons.AutoMirrored.Filled.Undo to MaterialTheme.colorScheme.tertiary
+            "redo" in message -> Icons.AutoMirrored.Filled.Redo to MaterialTheme.colorScheme.secondary
+            else -> Icons.Default.Info to MaterialTheme.colorScheme.outline
+        }
+
+        Surface(
+            shape = RoundedCornerShape(50),
+            tonalElevation = 3.dp,
+            color = MaterialTheme.colorScheme.surface,
+            shadowElevation = 3.dp,
+            modifier = Modifier
+                .padding(horizontal = 16.dp, vertical = 8.dp)
+        ) {
+            Row(
+                verticalAlignment = Alignment.CenterVertically,
+                modifier = Modifier.padding(horizontal = 16.dp, vertical = 10.dp)
+            ) {
+                Icon(
+                    imageVector = icon,
+                    contentDescription = null,
+                    tint = tint,
+                    modifier = Modifier.size(24.dp)
+                )
+                Spacer(modifier = Modifier.width(12.dp))
+                Text(
+                    text = data.visuals.message,
+                    style = MaterialTheme.typography.bodyMedium,
+                    color = MaterialTheme.colorScheme.onSurface
+                )
+            }
+        }
+    }
+
 
     Scaffold(
+        snackbarHost = {
+            SnackbarHost(hostState = snackbarHostState) { data ->
+                CustomSnackbar(data)
+            }
+        },
         topBar = {
             TopAppBar(
                 title = { Text("mGapp SVG Editor") },
                 actions = {
-                    // Exportar JSON
                     IconButton(onClick = { viewModel.exportHotspots(context) }) {
                         Icon(Icons.Filled.Download, contentDescription = "Exportar JSON")
                     }
-                    // Importar JSON
                     IconButton(onClick = {
                         importLauncher.launch(arrayOf("application/json"))
                     }) {
                         Icon(Icons.Filled.Upload, contentDescription = "Importar JSON")
                     }
-                    // Borrar todo (muestra diálogo)
                     IconButton(onClick = { showConfirmDialog = true }) {
                         Icon(Icons.Default.Delete, contentDescription = "Borrar todo")
+                    }
+                    IconButton(onClick = { viewModel.undo() }, enabled = canUndo) {
+                        Icon(Icons.AutoMirrored.Filled.Undo, contentDescription = "Undo")
+                    }
+                    IconButton(onClick = { viewModel.redo() }, enabled = canRedo) {
+                        Icon(Icons.AutoMirrored.Filled.Redo, contentDescription = "Redo")
                     }
                 }
             )
         }
     ) { padding ->
-        // 🔹 Mapa interactivo SVG
+        // 🔹 Contenido SVG
         SvgViewer(
             svgPath = "file:///android_asset/dekra.svg",
             hotspots = hotspots,
+            modifier = Modifier.padding(padding),
+
             onTap = { offset ->
                 pendingHotspot = Hotspot(
                     id = System.currentTimeMillis(),
@@ -88,17 +160,21 @@ fun MainScreen(viewModel: HotspotViewModel = hiltViewModel()) {
             HotspotBottomSheet(
                 hotspot = hotspot,
                 onSave = { updated ->
-                    viewModel.saveHotspot(
-                        HotspotEntity(
-                            id = updated.id,
-                            x = updated.x,
-                            y = updated.y,
-                            name = updated.name,
-                            description = updated.description
+                    viewModel.applyChange(
+                        HotspotChange.Create(
+                            HotspotEntity(
+                                id = updated.id,
+                                x = updated.x,
+                                y = updated.y,
+                                name = updated.name,
+                                description = updated.description
+                            )
                         )
                     )
                     pendingHotspot = null
-                },
+                }
+
+                ,
                 onDismiss = { pendingHotspot = null }
             )
         }
@@ -108,13 +184,36 @@ fun MainScreen(viewModel: HotspotViewModel = hiltViewModel()) {
             HotspotBottomSheet(
                 hotspot = hotspot,
                 onSave = { updated ->
-                    viewModel.saveHotspot(
-                        HotspotEntity(
-                            id = updated.id,
-                            x = updated.x,
-                            y = updated.y,
-                            name = updated.name,
-                            description = updated.description
+                    viewModel.applyChange(
+                        HotspotChange.Update(
+                            before = HotspotEntity(
+                                id = hotspot.id,
+                                x = hotspot.x,
+                                y = hotspot.y,
+                                name = hotspot.name,
+                                description = hotspot.description
+                            ),
+                            after = HotspotEntity(
+                                id = updated.id,
+                                x = updated.x,
+                                y = updated.y,
+                                name = updated.name,
+                                description = updated.description
+                            )
+                        )
+                    )
+                    selectedHotspot = null
+                },
+                onDelete = { toDelete ->
+                    viewModel.applyChange(
+                        HotspotChange.Delete(
+                            HotspotEntity(
+                                id = toDelete.id,
+                                x = toDelete.x,
+                                y = toDelete.y,
+                                name = toDelete.name,
+                                description = toDelete.description
+                            )
                         )
                     )
                     selectedHotspot = null
@@ -122,6 +221,7 @@ fun MainScreen(viewModel: HotspotViewModel = hiltViewModel()) {
                 onDismiss = { selectedHotspot = null }
             )
         }
+
 
         // 🔹 Diálogo de confirmación antes de borrar todo
         if (showConfirmDialog) {

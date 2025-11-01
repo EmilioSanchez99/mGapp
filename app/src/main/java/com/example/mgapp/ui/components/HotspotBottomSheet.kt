@@ -1,6 +1,8 @@
 package com.example.mgapp.ui.components
 
 import androidx.compose.foundation.layout.*
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
@@ -13,6 +15,7 @@ import com.example.mgapp.domain.model.Hotspot
 fun HotspotBottomSheet(
     hotspot: Hotspot,
     onSave: (Hotspot) -> Unit,
+    onDelete: ((Hotspot) -> Unit)? = null, // ✅ nuevo callback opcional
     onDismiss: () -> Unit
 ) {
     var name by remember { mutableStateOf(hotspot.name) }
@@ -27,12 +30,13 @@ fun HotspotBottomSheet(
                 .padding(24.dp)
         ) {
             Text(
-                text = "Editar Hotspot",
+                text = if (hotspot.name.isNullOrEmpty()) "Nuevo Hotspot" else "Editar Hotspot",
                 style = MaterialTheme.typography.titleLarge
             )
 
             Spacer(Modifier.height(16.dp))
 
+            // 🔹 Campo nombre
             OutlinedTextField(
                 value = name,
                 onValueChange = { name = it },
@@ -42,6 +46,7 @@ fun HotspotBottomSheet(
 
             Spacer(Modifier.height(8.dp))
 
+            // 🔹 Campo descripción
             OutlinedTextField(
                 value = description,
                 onValueChange = { description = it },
@@ -51,11 +56,12 @@ fun HotspotBottomSheet(
 
             Spacer(Modifier.height(24.dp))
 
+            // 🔹 Botones principales
             Row(
                 modifier = Modifier.fillMaxWidth(),
                 horizontalArrangement = Arrangement.End
             ) {
-                TextButton(onClick = { onDismiss() }) {
+                TextButton(onClick = onDismiss) {
                     Text("Cancelar")
                 }
                 Spacer(Modifier.width(8.dp))
@@ -66,6 +72,31 @@ fun HotspotBottomSheet(
                     }
                 ) {
                     Text("Guardar")
+                }
+            }
+
+            // 🔹 Botón eliminar solo si el hotspot ya existe (tiene nombre o descripción)
+            if (!hotspot.name.isNullOrEmpty() || !hotspot.description.isNullOrEmpty()) {
+                Spacer(Modifier.height(16.dp))
+                OutlinedButton(
+                    onClick = {
+                        onDelete?.invoke(hotspot)
+                        onDismiss()
+                    },
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(top = 8.dp),
+                    colors = ButtonDefaults.outlinedButtonColors(
+                        contentColor = MaterialTheme.colorScheme.error
+                    )
+                ) {
+                    Icon(
+                        imageVector = Icons.Default.Delete,
+                        contentDescription = null,
+                        tint = MaterialTheme.colorScheme.error
+                    )
+                    Spacer(Modifier.width(8.dp))
+                    Text("Eliminar este hotspot")
                 }
             }
         }

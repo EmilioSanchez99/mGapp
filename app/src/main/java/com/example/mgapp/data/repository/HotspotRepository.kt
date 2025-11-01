@@ -11,7 +11,16 @@ class HotspotRepository @Inject constructor(
     private val dao: HotspotDao
 ) {
     fun getAllHotspots(): Flow<List<HotspotEntity>> = dao.getAll()
+
     suspend fun saveHotspot(hotspot: HotspotEntity) = dao.insert(hotspot)
+
+    suspend fun updateHotspot(hotspot: HotspotEntity) = dao.update(hotspot)
+
     suspend fun deleteHotspot(hotspot: HotspotEntity) = dao.delete(hotspot)
+
+    suspend fun deleteHotspot(id: String) {
+        dao.getById(id)?.let { dao.delete(it) }
+    }
+
     suspend fun clearAll() = dao.deleteAll()
 }
