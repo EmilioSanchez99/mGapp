@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-
+    <string name="app_name">mGapp</string>
     <!-- HotspotBottomSheet.kt -->
     <string name="new_hotspot">New Hotspot</string>
     <string name="edit_hotspot">Edit Hotspot</string>
