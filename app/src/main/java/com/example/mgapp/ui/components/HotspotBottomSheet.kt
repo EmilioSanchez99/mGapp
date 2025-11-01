@@ -8,6 +8,7 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.SolidColor
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
@@ -23,6 +24,8 @@ fun HotspotBottomSheet(
     onDelete: ((Hotspot) -> Unit)? = null,
     onDismiss: () -> Unit
 ) {
+    val context = LocalContext.current
+
     val viewModel: HotspotViewModel = hiltViewModel()
 
     var name by remember { mutableStateOf(hotspot.name) }
@@ -51,9 +54,13 @@ fun HotspotBottomSheet(
                 .padding(24.dp)
         ) {
             Text(
-                text = if (hotspot.name.isEmpty()) "Nuevo Hotspot" else "Editar Hotspot",
+                text = if (hotspot.name.isEmpty())
+                    stringResource(R.string.new_hotspot)
+                else
+                    stringResource(R.string.edit_hotspot),
                 style = MaterialTheme.typography.titleLarge
             )
+
 
             Spacer(Modifier.height(16.dp))
 
@@ -135,7 +142,7 @@ fun HotspotBottomSheet(
 
                     Button(
                         onClick = {
-                            viewModel.onSaveHotspot()
+                            viewModel.onSaveHotspot(context)
                             onSave(
                                 hotspot.copy(
                                     name = name,

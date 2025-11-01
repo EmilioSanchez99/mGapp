@@ -15,11 +15,13 @@ import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.layout.onGloballyPositioned
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.dp
 import coil.compose.AsyncImage
 import coil.decode.SvgDecoder
 import coil.request.ImageRequest
+import com.example.mgapp.R
 import com.example.mgapp.domain.model.Hotspot
 import kotlin.math.roundToInt
 
@@ -83,7 +85,7 @@ fun SvgViewer(
                     .data(svgPath)
                     .decoderFactory(SvgDecoder.Factory())
                     .build(),
-                contentDescription = "SVG",
+                contentDescription = stringResource(R.string.svg_content_description),
                 modifier = Modifier.fillMaxSize()
             )
 

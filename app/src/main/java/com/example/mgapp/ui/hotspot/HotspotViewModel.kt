@@ -59,26 +59,26 @@ class HotspotViewModel @Inject constructor(
     // 🔁 GESTIÓN DE CAMBIOS
     // ===========================================================
 
-    fun applyChange(change: HotspotChange) = viewModelScope.launch {
+    fun applyChange(change: HotspotChange, context: Context) = viewModelScope.launch {
         when (change) {
             is HotspotChange.Create -> repository.saveHotspot(change.snapshot)
             is HotspotChange.Update -> repository.updateHotspot(change.after)
             is HotspotChange.Delete -> repository.deleteHotspot(change.snapshot)
-            is HotspotChange.Bulk -> applyBulk(change.changes)
+            is HotspotChange.Bulk -> applyBulk(change.changes, context)
         }
         pushToUndo(change)
 
         val message = when (change) {
-            is HotspotChange.Create -> "Hotspot creado"
-            is HotspotChange.Update -> "Hotspot actualizado"
-            is HotspotChange.Delete -> "Hotspot eliminado"
-            is HotspotChange.Bulk -> "Cambios aplicados"
+            is HotspotChange.Create -> context.getString(R.string.hotspot_created)
+            is HotspotChange.Update -> context.getString(R.string.hotspot_updated)
+            is HotspotChange.Delete -> context.getString(R.string.hotspot_deleted)
+            is HotspotChange.Bulk -> context.getString(R.string.changes_applied)
         }
         emitUiMessage(message)
     }
 
-    private suspend fun applyBulk(changes: List<HotspotChange>) {
-        for (c in changes) applyChange(c)
+    private suspend fun applyBulk(changes: List<HotspotChange>, context: Context) {
+        for (c in changes) applyChange(c, context)
     }
 
     private fun pushToUndo(change: HotspotChange) {
@@ -88,7 +88,7 @@ class HotspotViewModel @Inject constructor(
         updateUndoRedoState()
     }
 
-    fun undo() = viewModelScope.launch {
+    fun undo(context: Context) = viewModelScope.launch {
         val change = undoStack.removeLastOrNull() ?: return@launch
         val inverse = change.inverse()
         when (inverse) {
@@ -106,14 +106,14 @@ class HotspotViewModel @Inject constructor(
         }
         redoStack.addLast(change)
         updateUndoRedoState()
-        emitUiMessage("Undone")
+        emitUiMessage(context.getString(R.string.undone))
     }
 
-    fun redo() = viewModelScope.launch {
+    fun redo(context: Context) = viewModelScope.launch {
         val change = redoStack.removeLastOrNull() ?: return@launch
-        applyChange(change)
+        applyChange(change, context)
         updateUndoRedoState()
-        emitUiMessage("Redone")
+        emitUiMessage(context.getString(R.string.redone))
     }
 
     private fun updateUndoRedoState() {
@@ -144,13 +144,13 @@ class HotspotViewModel @Inject constructor(
     fun exportHotspots(context: Context) = viewModelScope.launch {
         val current = hotspots.value
         HotspotJsonHelper.exportToJson(context, current)
-        emitUiMessage("Exported successfully")
+        emitUiMessage(context.getString(R.string.export_success))
     }
 
     fun importHotspots(context: Context) = viewModelScope.launch {
         val imported = HotspotJsonHelper.importFromJson(context)
         imported.forEach { repository.saveHotspot(it) }
-        emitUiMessage("Imported successfully")
+        emitUiMessage(context.getString(R.string.import_success))
     }
 
     fun importFromUri(context: Context, uri: Uri) = viewModelScope.launch {
@@ -166,12 +166,12 @@ class HotspotViewModel @Inject constructor(
                 )
             }
         }
-        emitUiMessage("Imported from file")
+        emitUiMessage(context.getString(R.string.import_from_file))
     }
 
     // ===========================================================
-// 🧩 VALIDACIÓN DE FORMULARIOS
-// ===========================================================
+    // 🧩 VALIDACIÓN DE FORMULARIOS
+    // ===========================================================
 
     private val _formState: MutableState<FormUiState> = mutableStateOf(FormUiState())
     val formState: MutableState<FormUiState> = _formState
@@ -195,10 +195,6 @@ class HotspotViewModel @Inject constructor(
         )
     )
 
-    /**
-     * Inicializa el formulario con todos los campos vacíos
-     * y ejecuta la primera validación.
-     */
     fun initializeForm() {
         val initialValues = currentSchema.fields.associate { it.id to "" }
         val validation = validateForm(initialValues, currentSchema)
@@ -211,9 +207,6 @@ class HotspotViewModel @Inject constructor(
         )
     }
 
-    /**
-     * Actualiza el valor de un campo y recalcula la validación.
-     */
     fun onFieldChange(fieldId: String, newValue: String?) {
         val newValues = _formState.value.values.toMutableMap().apply {
             put(fieldId, newValue)
@@ -229,25 +222,18 @@ class HotspotViewModel @Inject constructor(
         )
     }
 
-    /**
-     * Intenta guardar el hotspot. Si hay errores o campos requeridos vacíos,
-     * bloquea el guardado y muestra un mensaje de error.
-     */
-    fun onSaveHotspot() {
+    fun onSaveHotspot(context: Context) {
         val state = _formState.value
-
-        // Validación final antes de guardar
         val validation = validateForm(state.values, currentSchema)
         val valid = validation.values.all { it.isEmpty() }
 
         if (!valid) {
             _formState.value = state.copy(errors = validation, isValid = false)
-            emitUiMessage("Not saved — fix highlighted fields")
+            emitUiMessage(context.getString(R.string.not_saved_fix_fields))
             return
         }
 
         viewModelScope.launch {
-            // Aquí conviertes los valores del formulario en una entidad Room
             val name = state.values["name"].orEmpty()
             val description = state.values["description"].orEmpty()
 
@@ -260,17 +246,13 @@ class HotspotViewModel @Inject constructor(
                     description = description
                 )
             )
-            emitUiMessage("Saved")
+            emitUiMessage(context.getString(R.string.saved_success))
         }
     }
 
-    /**
-     * Estado del formulario actual.
-     */
     data class FormUiState(
         val values: Map<String, String?> = emptyMap(),
         val errors: Map<String, List<ValidationError>> = emptyMap(),
         val isValid: Boolean = false
     )
-
 }

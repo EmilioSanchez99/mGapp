@@ -1,0 +1,91 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <!-- HotspotBottomSheet.kt -->
+    <string name="new_hotspot">Nuevo hotspot</string>
+    <string name="edit_hotspot">Editar hotspot</string>
+    <string name="label_name">Nombre</string>
+    <string name="label_description">Descripción</string>
+    <string name="delete_hotspot">Eliminar este hotspot</string>
+    <string name="cancel">Cancelar</string>
+    <string name="save">Guardar</string>
+
+    <!-- SvgViewer.kt -->
+    <string name="svg_content_description">Mapa SVG interactivo</string>
+
+    <!-- HotspotViewModel.kt -->
+    <string name="label_serial_number">Número de serie</string>
+    <string name="label_installation_date">Fecha de instalación</string>
+    <string name="label_height">Altura (m)</string>
+    <string name="label_active">Activo</string>
+
+    <!-- Errores de validación -->
+    <string name="err_required">Este campo es obligatorio</string>
+    <string name="err_min_length">Demasiado corto</string>
+    <string name="err_max_length">Demasiado largo</string>
+    <string name="err_invalid_format">Formato no válido</string>
+    <string name="err_invalid_number">Número no válido</string>
+    <string name="err_too_low">Valor demasiado bajo</string>
+    <string name="err_too_high">Valor demasiado alto</string>
+    <string name="err_invalid_option">Opción no válida</string>
+
+    <!-- Acciones de hotspots -->
+    <string name="hotspot_created">Hotspot creado</string>
+    <string name="hotspot_updated">Hotspot actualizado</string>
+    <string name="hotspot_deleted">Hotspot eliminado</string>
+    <string name="changes_applied">Cambios aplicados</string>
+
+    <!-- Undo / Redo -->
+    <string name="undone">Acción deshecha</string>
+    <string name="redone">Acción rehecha</string>
+
+    <!-- Exportar / Importar -->
+    <string name="export_success">Exportación completada</string>
+    <string name="import_success">Importación completada</string>
+    <string name="import_from_file">Importado desde archivo</string>
+
+    <!-- Validación de formulario -->
+    <string name="not_saved_fix_fields">No se ha guardado — corrige los campos resaltados</string>
+    <string name="saved_success">Guardado</string>
+
+    <!-- MainScreen.kt -->
+    <string name="title_main_screen">Editor SVG de mGapp</string>
+
+    <!-- Acciones de la barra superior -->
+    <string name="export_json">Exportar JSON</string>
+    <string name="import_json">Importar JSON</string>
+    <string name="delete_all">Eliminar todo</string>
+    <string name="undo">Deshacer</string>
+    <string name="redo">Rehacer</string>
+
+    <!-- Pestañas -->
+    <string name="tab_svg_map">Mapa SVG</string>
+    <string name="tab_hotspot_list">Lista de hotspots</string>
+
+    <!-- Toasts -->
+    <string name="toast_import_done">✅ Importación completada</string>
+    <string name="toast_no_hotspots">No hay hotspots para eliminar</string>
+    <string name="toast_all_deleted">🗑️ Todos los hotspots fueron eliminados</string>
+
+    <!-- Diálogo -->
+    <string name="dialog_title_confirm_delete">Confirmar eliminación</string>
+    <string name="dialog_message_confirm_delete">¿Seguro que quieres eliminar todos los hotspots guardados? Esta acción no se puede deshacer.</string>
+    <string name="dialog_confirm_button">Eliminar todo</string>
+    <string name="dialog_cancel_button">Cancelar</string>
+
+    <!-- HotspotListScreen.kt -->
+    <string name="title_hotspot_list">Hotspots</string>
+
+    <!-- Filtros -->
+    <string name="filter_all">Todos</string>
+    <string name="filter_complete">Completos</string>
+    <string name="filter_partial">Parciales</string>
+    <string name="filter_empty">Vacíos</string>
+
+    <!-- Tarjetas -->
+    <string name="label_complete">Completo</string>
+    <string name="label_partial">Parcial</string>
+    <string name="label_empty">Vacío</string>
+    <string name="label_no_name">Sin nombre</string>
+
+</resources>

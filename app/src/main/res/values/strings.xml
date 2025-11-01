@@ -1,5 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="app_name">mGapp</string>
+
+    <!-- HotspotBottomSheet.kt -->
+    <string name="new_hotspot">New Hotspot</string>
+    <string name="edit_hotspot">Edit Hotspot</string>
+    <string name="label_name">Name</string>
+    <string name="label_description">Description</string>
+    <string name="delete_hotspot">Delete this hotspot</string>
+    <string name="cancel">Cancel</string>
+    <string name="save">Save</string>
+
+    <!-- SvgViewer.kt -->
+    <string name="svg_content_description">Interactive SVG map</string>
+
+    <!-- HotspotViewModel.kt -->
     <string name="label_serial_number">Serial Number</string>
     <string name="label_installation_date">Installation Date</string>
     <string name="label_height">Height (m)</string>
@@ -12,11 +26,44 @@
     <string name="err_too_low">Value too low</string>
     <string name="err_too_high">Value too high</string>
     <string name="err_invalid_option">Invalid option</string>
-    <string name="label_name">name</string>
-    <string name="label_description">Description</string>
-    <string name="cancel">Cancel</string>
-    <string name="save">Save</string>
-    <string name="delete_hotspot">Delete Hotspot</string>
+    <string name="hotspot_created">Hotspot created</string>
+    <string name="hotspot_updated">Hotspot updated</string>
+    <string name="hotspot_deleted">Hotspot deleted</string>
+    <string name="changes_applied">Changes applied</string>
+    <string name="undone">Action undone</string>
+    <string name="redone">Action redone</string>
+    <string name="export_success">Exported successfully</string>
+    <string name="import_success">Imported successfully</string>
+    <string name="import_from_file">Imported from file</string>
+    <string name="not_saved_fix_fields">Not saved — fix highlighted fields</string>
+    <string name="saved_success">Saved</string>
 
+    <!-- MainScreen.kt -->
+    <string name="title_main_screen">mGapp SVG Editor</string>
+    <string name="export_json">Export JSON</string>
+    <string name="import_json">Import JSON</string>
+    <string name="delete_all">Delete all</string>
+    <string name="undo">Undo</string>
+    <string name="redo">Redo</string>
+    <string name="tab_svg_map">SVG Map</string>
+    <string name="tab_hotspot_list">Hotspot List</string>
+    <string name="toast_import_done">✅ Import completed</string>
+    <string name="toast_no_hotspots">No hotspots to delete</string>
+    <string name="toast_all_deleted">🗑️ All hotspots were deleted</string>
+    <string name="dialog_title_confirm_delete">Confirm deletion</string>
+    <string name="dialog_message_confirm_delete">Are you sure you want to delete all saved hotspots? This action cannot be undone.</string>
+    <string name="dialog_confirm_button">Delete all</string>
+    <string name="dialog_cancel_button">Cancel</string>
+
+    <!-- HotspotListScreen.kt -->
+    <string name="title_hotspot_list">Hotspots</string>
+    <string name="filter_all">All</string>
+    <string name="filter_complete">Complete</string>
+    <string name="filter_partial">Partial</string>
+    <string name="filter_empty">Empty</string>
+    <string name="label_complete">Complete</string>
+    <string name="label_partial">Partial</string>
+    <string name="label_empty">Empty</string>
+    <string name="label_no_name">Unnamed</string>
 
 </resources>

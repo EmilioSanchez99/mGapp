@@ -12,8 +12,10 @@ import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
+import com.example.mgapp.R
 import com.example.mgapp.data.local.entity.HotspotEntity
 import com.example.mgapp.domain.CompletionState
 import com.example.mgapp.domain.getCompletionState
@@ -36,7 +38,7 @@ fun HotspotListScreen(
     Scaffold(
         topBar = {
             TopAppBar(
-                title = { Text("Hotspots") }
+                title = { Text(stringResource(R.string.title_hotspot_list)) }
             )
         }
     ) { padding ->
@@ -54,28 +56,27 @@ fun HotspotListScreen(
                 FilterChip(
                     selected = filter == null,
                     onClick = { filter = null },
-                    label = { Text("All") }
+                    label = { Text(stringResource(R.string.filter_all)) }
                 )
                 FilterChip(
                     selected = filter == CompletionState.COMPLETE,
                     onClick = { filter = CompletionState.COMPLETE },
-                    label = { Text("Complete") }
+                    label = { Text(stringResource(R.string.filter_complete)) }
                 )
                 FilterChip(
                     selected = filter == CompletionState.PARTIAL,
                     onClick = { filter = CompletionState.PARTIAL },
-                    label = { Text("Partial") }
+                    label = { Text(stringResource(R.string.filter_partial)) }
                 )
                 FilterChip(
                     selected = filter == CompletionState.EMPTY,
                     onClick = { filter = CompletionState.EMPTY },
-                    label = { Text("Empty") }
+                    label = { Text(stringResource(R.string.filter_empty)) }
                 )
             }
 
             Spacer(Modifier.height(12.dp))
 
-            // 🔹 Lista de hotspots
             LazyColumn(verticalArrangement = Arrangement.spacedBy(8.dp)) {
                 items(filtered) { hotspot ->
                     HotspotCard(hotspot, onEditHotspot)
@@ -92,9 +93,9 @@ fun HotspotCard(
 ) {
     val state = hotspot.getCompletionState()
     val (icon, color, label) = when (state) {
-        CompletionState.COMPLETE -> Triple(Icons.Default.CheckCircle, MaterialTheme.colorScheme.primary, "Complete")
-        CompletionState.PARTIAL -> Triple(Icons.Default.Warning, MaterialTheme.colorScheme.tertiary, "Partial")
-        CompletionState.EMPTY -> Triple(Icons.Default.RadioButtonUnchecked, MaterialTheme.colorScheme.outline, "Empty")
+        CompletionState.COMPLETE -> Triple(Icons.Default.CheckCircle, MaterialTheme.colorScheme.primary, stringResource(R.string.label_complete))
+        CompletionState.PARTIAL -> Triple(Icons.Default.Warning, MaterialTheme.colorScheme.tertiary, stringResource(R.string.label_partial))
+        CompletionState.EMPTY -> Triple(Icons.Default.RadioButtonUnchecked, MaterialTheme.colorScheme.outline, stringResource(R.string.label_empty))
     }
 
     Card(
@@ -111,7 +112,7 @@ fun HotspotCard(
         ) {
             Column(Modifier.weight(1f)) {
                 Text(
-                    text = hotspot.name.ifBlank { "Sin nombre" },
+                    text = hotspot.name.ifBlank { stringResource(R.string.label_no_name) },
                     style = MaterialTheme.typography.titleMedium
                 )
                 if (!hotspot.description.isNullOrBlank()) {

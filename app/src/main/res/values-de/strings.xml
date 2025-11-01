@@ -1,6 +1,19 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="app_name">mGapp</string>
+
+    <!-- HotspotBottomSheet.kt -->
+    <string name="new_hotspot">Neuer Hotspot</string>
+    <string name="edit_hotspot">Hotspot bearbeiten</string>
+    <string name="label_name">Name</string>
+    <string name="label_description">Beschreibung</string>
+    <string name="delete_hotspot">Diesen Hotspot löschen</string>
+    <string name="cancel">Abbrechen</string>
+    <string name="save">Speichern</string>
+
+    <!-- SvgViewer.kt -->
+    <string name="svg_content_description">Interaktive SVG-Karte</string>
+
+    <!-- HotspotViewModel.kt -->
     <string name="label_serial_number">Seriennummer</string>
     <string name="label_installation_date">Installationsdatum</string>
     <string name="label_height">Höhe (m)</string>
@@ -13,6 +26,44 @@
     <string name="err_too_low">Wert zu niedrig</string>
     <string name="err_too_high">Wert zu hoch</string>
     <string name="err_invalid_option">Ungültige Option</string>
+    <string name="hotspot_created">Hotspot erstellt</string>
+    <string name="hotspot_updated">Hotspot aktualisiert</string>
+    <string name="hotspot_deleted">Hotspot gelöscht</string>
+    <string name="changes_applied">Änderungen angewendet</string>
+    <string name="undone">Aktion rückgängig gemacht</string>
+    <string name="redone">Aktion wiederholt</string>
+    <string name="export_success">Erfolgreich exportiert</string>
+    <string name="import_success">Erfolgreich importiert</string>
+    <string name="import_from_file">Aus Datei importiert</string>
+    <string name="not_saved_fix_fields">Nicht gespeichert — markierte Felder korrigieren</string>
+    <string name="saved_success">Gespeichert</string>
 
+    <!-- MainScreen.kt -->
+    <string name="title_main_screen">mGapp SVG-Editor</string>
+    <string name="export_json">JSON exportieren</string>
+    <string name="import_json">JSON importieren</string>
+    <string name="delete_all">Alles löschen</string>
+    <string name="undo">Rückgängig</string>
+    <string name="redo">Wiederholen</string>
+    <string name="tab_svg_map">SVG-Karte</string>
+    <string name="tab_hotspot_list">Hotspot-Liste</string>
+    <string name="toast_import_done">✅ Import abgeschlossen</string>
+    <string name="toast_no_hotspots">Keine Hotspots zum Löschen</string>
+    <string name="toast_all_deleted">🗑️ Alle Hotspots wurden gelöscht</string>
+    <string name="dialog_title_confirm_delete">Löschen bestätigen</string>
+    <string name="dialog_message_confirm_delete">Sind Sie sicher, dass Sie alle gespeicherten Hotspots löschen möchten? Diese Aktion kann nicht rückgängig gemacht werden.</string>
+    <string name="dialog_confirm_button">Alles löschen</string>
+    <string name="dialog_cancel_button">Abbrechen</string>
+
+    <!-- HotspotListScreen.kt -->
+    <string name="title_hotspot_list">Hotspots</string>
+    <string name="filter_all">Alle</string>
+    <string name="filter_complete">Vollständig</string>
+    <string name="filter_partial">Teilweise</string>
+    <string name="filter_empty">Leer</string>
+    <string name="label_complete">Vollständig</string>
+    <string name="label_partial">Teilweise</string>
+    <string name="label_empty">Leer</string>
+    <string name="label_no_name">Ohne Namen</string>
 
 </resources>

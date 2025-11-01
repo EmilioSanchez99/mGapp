@@ -20,8 +20,10 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
+import com.example.mgapp.R
 import com.example.mgapp.data.local.entity.HotspotEntity
 import com.example.mgapp.domain.HotspotChange
 import com.example.mgapp.domain.model.Hotspot
@@ -61,7 +63,7 @@ fun MainScreen(viewModel: HotspotViewModel = hiltViewModel()) {
         onResult = { uri: Uri? ->
             if (uri != null) {
                 viewModel.importFromUri(context, uri)
-                Toast.makeText(context, "✅ Importación completada", Toast.LENGTH_SHORT).show()
+                Toast.makeText(context, context.getString(R.string.toast_import_done), Toast.LENGTH_SHORT).show()
             }
         }
     )
@@ -116,22 +118,22 @@ fun MainScreen(viewModel: HotspotViewModel = hiltViewModel()) {
         },
         topBar = {
             TopAppBar(
-                title = { Text("mGapp SVG Editor") },
+                title = { Text(stringResource(R.string.title_main_screen)) },
                 actions = {
                     IconButton(onClick = { viewModel.exportHotspots(context) }) {
-                        Icon(Icons.Filled.Download, contentDescription = "Exportar JSON")
+                        Icon(Icons.Filled.Download, contentDescription = stringResource(R.string.export_json))
                     }
                     IconButton(onClick = { importLauncher.launch(arrayOf("application/json")) }) {
-                        Icon(Icons.Filled.Upload, contentDescription = "Importar JSON")
+                        Icon(Icons.Filled.Upload, contentDescription = stringResource(R.string.import_json))
                     }
                     IconButton(onClick = { showConfirmDialog = true }) {
-                        Icon(Icons.Default.Delete, contentDescription = "Borrar todo")
+                        Icon(Icons.Default.Delete, contentDescription = stringResource(R.string.delete_all))
                     }
-                    IconButton(onClick = { viewModel.undo() }, enabled = canUndo) {
-                        Icon(Icons.AutoMirrored.Filled.Undo, contentDescription = "Undo")
+                    IconButton(onClick = { viewModel.undo(context) }, enabled = canUndo) {
+                        Icon(Icons.AutoMirrored.Filled.Undo, contentDescription = stringResource(R.string.undo))
                     }
-                    IconButton(onClick = { viewModel.redo() }, enabled = canRedo) {
-                        Icon(Icons.AutoMirrored.Filled.Redo, contentDescription = "Redo")
+                    IconButton(onClick = { viewModel.redo(context) }, enabled = canRedo) {
+                        Icon(Icons.AutoMirrored.Filled.Redo, contentDescription = stringResource(R.string.redo))
                     }
                 }
             )
@@ -144,12 +146,12 @@ fun MainScreen(viewModel: HotspotViewModel = hiltViewModel()) {
                 Tab(
                     selected = selectedTab == 0,
                     onClick = { selectedTab = 0 },
-                    text = { Text("Mapa SVG") }
+                    text = { Text(stringResource(R.string.tab_svg_map)) }
                 )
                 Tab(
                     selected = selectedTab == 1,
                     onClick = { selectedTab = 1 },
-                    text = { Text("Lista de Hotspots") }
+                    text = { Text(stringResource(R.string.tab_hotspot_list)) }
                 )
             }
 
@@ -205,7 +207,8 @@ fun MainScreen(viewModel: HotspotViewModel = hiltViewModel()) {
                                 name = updated.name,
                                 description = updated.description
                             )
-                        )
+                        ),
+                        context
                     )
                     pendingHotspot = null
                 },
@@ -233,7 +236,8 @@ fun MainScreen(viewModel: HotspotViewModel = hiltViewModel()) {
                                 name = updated.name,
                                 description = updated.description
                             )
-                        )
+                        ),
+                        context
                     )
                     selectedHotspot = null
                 },
@@ -247,7 +251,8 @@ fun MainScreen(viewModel: HotspotViewModel = hiltViewModel()) {
                                 name = toDelete.name,
                                 description = toDelete.description
                             )
-                        )
+                        ),
+                        context
                     )
                     selectedHotspot = null
                 },
@@ -260,7 +265,7 @@ fun MainScreen(viewModel: HotspotViewModel = hiltViewModel()) {
         // ===========================================================
         if (showConfirmDialog) {
             if (hotspots.isEmpty()) {
-                Toast.makeText(context, "No hay hotspots para borrar", Toast.LENGTH_SHORT).show()
+                Toast.makeText(context, stringResource(R.string.toast_no_hotspots), Toast.LENGTH_SHORT).show()
                 showConfirmDialog = false
             } else {
                 AlertDialog(
@@ -275,10 +280,10 @@ fun MainScreen(viewModel: HotspotViewModel = hiltViewModel()) {
                             modifier = Modifier.size(48.dp)
                         )
                     },
-                    title = { Text("Confirmar eliminación", style = MaterialTheme.typography.titleLarge) },
+                    title = { Text(stringResource(R.string.dialog_title_confirm_delete), style = MaterialTheme.typography.titleLarge) },
                     text = {
                         Text(
-                            "¿Seguro que quieres borrar todos los hotspots guardados? Esta acción no se puede deshacer.",
+                            stringResource(R.string.dialog_message_confirm_delete),
                             style = MaterialTheme.typography.bodyMedium
                         )
                     },
@@ -287,18 +292,18 @@ fun MainScreen(viewModel: HotspotViewModel = hiltViewModel()) {
                             onClick = {
                                 viewModel.clearAll()
                                 showConfirmDialog = false
-                                Toast.makeText(context, "🗑️ Todos los hotspots fueron eliminados", Toast.LENGTH_SHORT).show()
+                                Toast.makeText(context, context.getString(R.string.toast_all_deleted), Toast.LENGTH_SHORT).show()
                             },
                             colors = ButtonDefaults.buttonColors(
                                 containerColor = MaterialTheme.colorScheme.error
                             )
                         ) {
-                            Text("Borrar todo", color = MaterialTheme.colorScheme.onError)
+                            Text(stringResource(R.string.dialog_confirm_button), color = MaterialTheme.colorScheme.onError)
                         }
                     },
                     dismissButton = {
                         OutlinedButton(onClick = { showConfirmDialog = false }) {
-                            Text("Cancelar")
+                            Text(stringResource(R.string.dialog_cancel_button))
                         }
                     }
                 )
