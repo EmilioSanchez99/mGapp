@@ -1,0 +1,44 @@
+[
+  {
+    "hotspotId": "hs_antenna_1",
+    "fields": [
+      {
+        "id": "serialNumber",
+        "labelRes": "label_serial_number",
+        "type": "TEXT",
+        "validation": {
+          "required": true,
+          "min": 5,
+          "max": 20,
+          "regex": "^[A-Z0-9-]+$"
+        }
+      },
+      {
+        "id": "installationDate",
+        "labelRes": "label_installation_date",
+        "type": "DATE",
+        "validation": {
+          "required": true
+        }
+      },
+      {
+        "id": "height",
+        "labelRes": "label_height",
+        "type": "NUMBER",
+        "validation": {
+          "required": false,
+          "min": 0,
+          "max": 100
+        }
+      },
+      {
+        "id": "active",
+        "labelRes": "label_active",
+        "type": "CHECKBOX",
+        "validation": {
+          "required": false
+        }
+      }
+    ]
+  }
+]

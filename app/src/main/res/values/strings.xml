@@ -1,3 +1,22 @@
 <resources>
     <string name="app_name">mGapp</string>
+    <string name="label_serial_number">Serial Number</string>
+    <string name="label_installation_date">Installation Date</string>
+    <string name="label_height">Height (m)</string>
+    <string name="label_active">Active</string>
+    <string name="err_required">This field is required</string>
+    <string name="err_min_length">Too short</string>
+    <string name="err_max_length">Too long</string>
+    <string name="err_invalid_format">Invalid format</string>
+    <string name="err_invalid_number">Invalid number</string>
+    <string name="err_too_low">Value too low</string>
+    <string name="err_too_high">Value too high</string>
+    <string name="err_invalid_option">Invalid option</string>
+    <string name="label_name">name</string>
+    <string name="label_description">Description</string>
+    <string name="cancel">Cancel</string>
+    <string name="save">Save</string>
+    <string name="delete_hotspot">Delete Hotspot</string>
+
+
 </resources>

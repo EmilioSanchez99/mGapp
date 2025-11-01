@@ -10,4 +10,6 @@ data class HotspotEntity(
     val y: Float,
     val name: String,
     val description: String?
+
 )
+

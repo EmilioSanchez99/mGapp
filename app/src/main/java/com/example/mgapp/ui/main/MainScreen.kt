@@ -4,11 +4,7 @@ import android.net.Uri
 import android.widget.Toast
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
-import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.Redo
@@ -20,6 +16,7 @@ import androidx.compose.material.icons.filled.Info
 import androidx.compose.material.icons.filled.Upload
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
@@ -31,6 +28,7 @@ import com.example.mgapp.domain.model.Hotspot
 import com.example.mgapp.ui.components.HotspotBottomSheet
 import com.example.mgapp.ui.components.SvgViewer
 import com.example.mgapp.ui.hotspot.HotspotViewModel
+import com.example.mgapp.ui.screens.HotspotListScreen
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -46,18 +44,18 @@ fun MainScreen(viewModel: HotspotViewModel = hiltViewModel()) {
     var pendingHotspot by remember { mutableStateOf<Hotspot?>(null) }
     var selectedHotspot by remember { mutableStateOf<Hotspot?>(null) }
     var showConfirmDialog by remember { mutableStateOf(false) }
+    var selectedTab by rememberSaveable { mutableStateOf(0) } // 0 = Mapa, 1 = Lista
 
-    // ✅ Snackbar para mensajes tipo “Saved”, “Undone”, etc.
     val snackbarHostState = remember { SnackbarHostState() }
 
-    // Escuchar el flujo de mensajes del ViewModel
+    // Escuchar mensajes del ViewModel (Saved, Deleted, etc.)
     LaunchedEffect(Unit) {
         viewModel.uiMessage.collect { msg ->
             snackbarHostState.showSnackbar(message = msg)
         }
     }
 
-    // 🔹 Launcher para elegir archivo JSON manualmente
+    // 🔹 Launcher para importar JSON
     val importLauncher = rememberLauncherForActivityResult(
         contract = ActivityResultContracts.OpenDocument(),
         onResult = { uri: Uri? ->
@@ -67,10 +65,11 @@ fun MainScreen(viewModel: HotspotViewModel = hiltViewModel()) {
             }
         }
     )
+
+    // 🔹 Snackbar personalizado
     @Composable
     fun CustomSnackbar(data: SnackbarData) {
-        val message = data.visuals.message.lowercase() // ✅ ahora sí está definida
-
+        val message = data.visuals.message.lowercase()
         val (icon, tint) = when {
             "eliminado" in message -> Icons.Default.Delete to MaterialTheme.colorScheme.error
             "saved" in message -> Icons.Default.Check to MaterialTheme.colorScheme.primary
@@ -84,8 +83,7 @@ fun MainScreen(viewModel: HotspotViewModel = hiltViewModel()) {
             tonalElevation = 3.dp,
             color = MaterialTheme.colorScheme.surface,
             shadowElevation = 3.dp,
-            modifier = Modifier
-                .padding(horizontal = 16.dp, vertical = 8.dp)
+            modifier = Modifier.padding(horizontal = 16.dp, vertical = 8.dp)
         ) {
             Row(
                 verticalAlignment = Alignment.CenterVertically,
@@ -107,7 +105,9 @@ fun MainScreen(viewModel: HotspotViewModel = hiltViewModel()) {
         }
     }
 
-
+    // ===========================================================
+    // 🔹 Estructura principal con pestañas
+    // ===========================================================
     Scaffold(
         snackbarHost = {
             SnackbarHost(hostState = snackbarHostState) { data ->
@@ -121,9 +121,7 @@ fun MainScreen(viewModel: HotspotViewModel = hiltViewModel()) {
                     IconButton(onClick = { viewModel.exportHotspots(context) }) {
                         Icon(Icons.Filled.Download, contentDescription = "Exportar JSON")
                     }
-                    IconButton(onClick = {
-                        importLauncher.launch(arrayOf("application/json"))
-                    }) {
+                    IconButton(onClick = { importLauncher.launch(arrayOf("application/json")) }) {
                         Icon(Icons.Filled.Upload, contentDescription = "Importar JSON")
                     }
                     IconButton(onClick = { showConfirmDialog = true }) {
@@ -139,23 +137,61 @@ fun MainScreen(viewModel: HotspotViewModel = hiltViewModel()) {
             )
         }
     ) { padding ->
-        // 🔹 Contenido SVG
-        SvgViewer(
-            svgPath = "file:///android_asset/dekra.svg",
-            hotspots = hotspots,
-            modifier = Modifier.padding(padding),
 
-            onTap = { offset ->
-                pendingHotspot = Hotspot(
-                    id = System.currentTimeMillis(),
-                    x = offset.x,
-                    y = offset.y
+        Column(modifier = Modifier.padding(padding)) {
+            // 🔸 Pestañas superiores
+            TabRow(selectedTabIndex = selectedTab) {
+                Tab(
+                    selected = selectedTab == 0,
+                    onClick = { selectedTab = 0 },
+                    text = { Text("Mapa SVG") }
                 )
-            },
-            onHotspotClick = { selectedHotspot = it }
-        )
+                Tab(
+                    selected = selectedTab == 1,
+                    onClick = { selectedTab = 1 },
+                    text = { Text("Lista de Hotspots") }
+                )
+            }
 
-        // 🔹 Crear nuevo hotspot (BottomSheet)
+            when (selectedTab) {
+                0 -> {
+                    // 🗺️ SVG Viewer
+                    SvgViewer(
+                        svgPath = "file:///android_asset/dekra.svg",
+                        hotspots = hotspots,
+                        modifier = Modifier.weight(1f),
+                        onTap = { offset ->
+                            pendingHotspot = Hotspot(
+                                id = System.currentTimeMillis(),
+                                x = offset.x,
+                                y = offset.y
+                            )
+                        },
+                        onHotspotClick = { selectedHotspot = it }
+                    )
+                }
+
+                1 -> {
+                    // 📋 Lista general
+                    HotspotListScreen(
+                        viewModel = viewModel,
+                        onEditHotspot = { hotspotEntity ->
+                            selectedHotspot = Hotspot(
+                                id = hotspotEntity.id,
+                                x = hotspotEntity.x,
+                                y = hotspotEntity.y,
+                                name = hotspotEntity.name,
+                                description = hotspotEntity.description
+                            )
+                        }
+                    )
+                }
+            }
+        }
+
+        // ===========================================================
+        // 🔹 BottomSheets
+        // ===========================================================
         pendingHotspot?.let { hotspot ->
             HotspotBottomSheet(
                 hotspot = hotspot,
@@ -172,14 +208,11 @@ fun MainScreen(viewModel: HotspotViewModel = hiltViewModel()) {
                         )
                     )
                     pendingHotspot = null
-                }
-
-                ,
+                },
                 onDismiss = { pendingHotspot = null }
             )
         }
 
-        // 🔹 Editar hotspot existente
         selectedHotspot?.let { hotspot ->
             HotspotBottomSheet(
                 hotspot = hotspot,
@@ -222,8 +255,9 @@ fun MainScreen(viewModel: HotspotViewModel = hiltViewModel()) {
             )
         }
 
-
-        // 🔹 Diálogo de confirmación antes de borrar todo
+        // ===========================================================
+        // 🔹 Diálogo de confirmación (borrar todo)
+        // ===========================================================
         if (showConfirmDialog) {
             if (hotspots.isEmpty()) {
                 Toast.makeText(context, "No hay hotspots para borrar", Toast.LENGTH_SHORT).show()
@@ -241,18 +275,11 @@ fun MainScreen(viewModel: HotspotViewModel = hiltViewModel()) {
                             modifier = Modifier.size(48.dp)
                         )
                     },
-                    title = {
-                        Text(
-                            text = "Confirmar eliminación",
-                            style = MaterialTheme.typography.titleLarge,
-                            color = MaterialTheme.colorScheme.onSurface
-                        )
-                    },
+                    title = { Text("Confirmar eliminación", style = MaterialTheme.typography.titleLarge) },
                     text = {
                         Text(
-                            text = "¿Seguro que quieres borrar todos los hotspots guardados? Esta acción no se puede deshacer.",
-                            style = MaterialTheme.typography.bodyMedium,
-                            color = MaterialTheme.colorScheme.onSurfaceVariant
+                            "¿Seguro que quieres borrar todos los hotspots guardados? Esta acción no se puede deshacer.",
+                            style = MaterialTheme.typography.bodyMedium
                         )
                     },
                     confirmButton = {
@@ -270,15 +297,12 @@ fun MainScreen(viewModel: HotspotViewModel = hiltViewModel()) {
                         }
                     },
                     dismissButton = {
-                        OutlinedButton(
-                            onClick = { showConfirmDialog = false }
-                        ) {
+                        OutlinedButton(onClick = { showConfirmDialog = false }) {
                             Text("Cancelar")
                         }
                     }
                 )
             }
         }
-
     }
 }

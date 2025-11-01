@@ -2,21 +2,25 @@ package com.example.mgapp.ui.hotspot
 
 import android.content.Context
 import android.net.Uri
+import androidx.compose.runtime.MutableState
+import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.example.mgapp.R
 import com.example.mgapp.data.local.entity.HotspotEntity
 import com.example.mgapp.data.local.serializer.HotspotJsonHelper
+import com.example.mgapp.data.model.FieldSchema
+import com.example.mgapp.data.model.FieldType
+import com.example.mgapp.data.model.HotspotSchema
+import com.example.mgapp.data.model.ValidationRule
 import com.example.mgapp.data.repository.HotspotRepository
 import com.example.mgapp.domain.HotspotChange
+import com.example.mgapp.domain.ValidationError
+import com.example.mgapp.domain.validateForm
 import com.example.mgapp.domain.inverse
 import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
-import kotlinx.coroutines.flow.MutableSharedFlow
-import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.SharedFlow
-import kotlinx.coroutines.flow.SharingStarted
-import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.flow.stateIn
+import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
 import kotlinx.serialization.json.Json
 
@@ -25,7 +29,10 @@ class HotspotViewModel @Inject constructor(
     private val repository: HotspotRepository
 ) : ViewModel() {
 
-    // --- Estados de Undo/Redo ---
+    // ===========================================================
+    // 🔁 UNDO / REDO
+    // ===========================================================
+
     private val undoStack = ArrayDeque<HotspotChange>()
     private val redoStack = ArrayDeque<HotspotChange>()
     private val maxDepth = 30
@@ -41,12 +48,15 @@ class HotspotViewModel @Inject constructor(
 
     private fun emitUiMessage(msg: String) = _uiMessage.tryEmit(msg)
 
-    // --- Flujo principal de hotspots ---
+    // ===========================================================
+    // 🌐 FLUJO PRINCIPAL DE HOTSPOTS
+    // ===========================================================
+
     val hotspots = repository.getAllHotspots()
         .stateIn(viewModelScope, SharingStarted.Lazily, emptyList())
 
     // ===========================================================
-    // 🔁 UNDO / REDO
+    // 🔁 GESTIÓN DE CAMBIOS
     // ===========================================================
 
     fun applyChange(change: HotspotChange) = viewModelScope.launch {
@@ -66,6 +76,7 @@ class HotspotViewModel @Inject constructor(
         }
         emitUiMessage(message)
     }
+
     private suspend fun applyBulk(changes: List<HotspotChange>) {
         for (c in changes) applyChange(c)
     }
@@ -84,7 +95,7 @@ class HotspotViewModel @Inject constructor(
             is HotspotChange.Create -> repository.saveHotspot(inverse.snapshot)
             is HotspotChange.Update -> repository.updateHotspot(inverse.after)
             is HotspotChange.Delete -> repository.deleteHotspot(inverse.snapshot)
-            is HotspotChange.Bulk   -> inverse.changes.forEach {
+            is HotspotChange.Bulk -> inverse.changes.forEach {
                 when (it) {
                     is HotspotChange.Create -> repository.saveHotspot(it.snapshot)
                     is HotspotChange.Update -> repository.updateHotspot(it.after)
@@ -157,4 +168,109 @@ class HotspotViewModel @Inject constructor(
         }
         emitUiMessage("Imported from file")
     }
+
+    // ===========================================================
+// 🧩 VALIDACIÓN DE FORMULARIOS
+// ===========================================================
+
+    private val _formState: MutableState<FormUiState> = mutableStateOf(FormUiState())
+    val formState: MutableState<FormUiState> = _formState
+
+    // 👇 Este esquema puede venir de tu JSON o definirse aquí para pruebas
+    private val currentSchema = HotspotSchema(
+        hotspotId = "default",
+        fields = listOf(
+            FieldSchema(
+                id = "name",
+                labelRes = R.string.label_name,
+                type = FieldType.TEXT,
+                validation = ValidationRule(required = true, min = 3.0)
+            ),
+            FieldSchema(
+                id = "description",
+                labelRes = R.string.label_description,
+                type = FieldType.TEXT,
+                validation = ValidationRule(required = false)
+            )
+        )
+    )
+
+    /**
+     * Inicializa el formulario con todos los campos vacíos
+     * y ejecuta la primera validación.
+     */
+    fun initializeForm() {
+        val initialValues = currentSchema.fields.associate { it.id to "" }
+        val validation = validateForm(initialValues, currentSchema)
+        val valid = validation.values.all { it.isEmpty() }
+
+        _formState.value = FormUiState(
+            values = initialValues,
+            errors = validation,
+            isValid = valid
+        )
+    }
+
+    /**
+     * Actualiza el valor de un campo y recalcula la validación.
+     */
+    fun onFieldChange(fieldId: String, newValue: String?) {
+        val newValues = _formState.value.values.toMutableMap().apply {
+            put(fieldId, newValue)
+        }
+
+        val validation = validateForm(newValues, currentSchema)
+        val valid = validation.values.all { it.isEmpty() }
+
+        _formState.value = FormUiState(
+            values = newValues,
+            errors = validation,
+            isValid = valid
+        )
+    }
+
+    /**
+     * Intenta guardar el hotspot. Si hay errores o campos requeridos vacíos,
+     * bloquea el guardado y muestra un mensaje de error.
+     */
+    fun onSaveHotspot() {
+        val state = _formState.value
+
+        // Validación final antes de guardar
+        val validation = validateForm(state.values, currentSchema)
+        val valid = validation.values.all { it.isEmpty() }
+
+        if (!valid) {
+            _formState.value = state.copy(errors = validation, isValid = false)
+            emitUiMessage("Not saved — fix highlighted fields")
+            return
+        }
+
+        viewModelScope.launch {
+            // Aquí conviertes los valores del formulario en una entidad Room
+            val name = state.values["name"].orEmpty()
+            val description = state.values["description"].orEmpty()
+
+            repository.saveHotspot(
+                HotspotEntity(
+                    id = 0, // autogenerado
+                    x = 0f,
+                    y = 0f,
+                    name = name,
+                    description = description
+                )
+            )
+            emitUiMessage("Saved")
+        }
+    }
+
+    /**
+     * Estado del formulario actual.
+     */
+    data class FormUiState(
+        val values: Map<String, String?> = emptyMap(),
+        val errors: Map<String, List<ValidationError>> = emptyMap(),
+        val isValid: Boolean = false
+    )
+
 }

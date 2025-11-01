@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">mGapp</string>
+    <string name="label_serial_number">Seriennummer</string>
+    <string name="label_installation_date">Installationsdatum</string>
+    <string name="label_height">Höhe (m)</string>
+    <string name="label_active">Aktiv</string>
+    <string name="err_required">Pflichtfeld</string>
+    <string name="err_min_length">Zu kurz</string>
+    <string name="err_max_length">Zu lang</string>
+    <string name="err_invalid_format">Ungültiges Format</string>
+    <string name="err_invalid_number">Ungültige Zahl</string>
+    <string name="err_too_low">Wert zu niedrig</string>
+    <string name="err_too_high">Wert zu hoch</string>
+    <string name="err_invalid_option">Ungültige Option</string>
+
+
+</resources>
