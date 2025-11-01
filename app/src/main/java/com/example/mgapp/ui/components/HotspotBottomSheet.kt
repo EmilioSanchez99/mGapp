@@ -15,6 +15,12 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import com.example.mgapp.R
 import com.example.mgapp.domain.model.Hotspot
 import com.example.mgapp.ui.hotspot.HotspotViewModel
+import androidx.compose.foundation.layout.Column
+import androidx.compose.material3.*
+import androidx.compose.runtime.Composable
+import androidx.compose.foundation.layout.Column
+import androidx.compose.material3.*
+
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -162,3 +168,23 @@ fun HotspotBottomSheet(
         }
     }
 }
+@Composable
+fun HotspotBottomSheetPreviewable(
+    hotspotName: String = "Test Name",
+    hotspotDescription: String = "Test Description",
+    onDismiss: () -> Unit = {},
+    onSave: () -> Unit = {}
+) {
+    Surface {
+        Column {
+            Text("Name")
+            Text(hotspotName)
+            Text("Description")
+            Text(hotspotDescription)
+            Button(onClick = onSave) { Text("Save") }
+            Button(onClick = onDismiss) { Text("Cancel") }
+        }
+    }
+}
+
+
