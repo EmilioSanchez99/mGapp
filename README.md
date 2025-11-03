@@ -59,3 +59,13 @@ mGapp follows the **MVVM** pattern with **unidirectional data flow**, ensuring c
 1. Clone the repository:
    ```bash
    git clone https://github.com/EmilioSanchez99/mGapp
+
+## 📱 Preview
+
+![mGapp Demo](docs/screenshots/demo.gif)
+
+---
+
+MIT License © 2025 **Emilio Sánchez Vargas**  
+Developed as a technical test for **DEKRA Spain**.
+
