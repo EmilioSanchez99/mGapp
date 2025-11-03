@@ -61,7 +61,7 @@ fun SvgViewer(
             // Detect taps safely (avoid phantom hotspot)
             .pointerInput(Unit) {
                 detectTapGestures { tap ->
-                    // ✅ Ensure layout is measured before allowing hotspot creation
+                    // Ensure layout is measured before allowing hotspot creation
                     if (containerSize.width > 0 && containerSize.height > 0) {
                         val center = Offset(containerSize.width / 2, containerSize.height / 2)
                         val corrected = Offset(
@@ -69,7 +69,7 @@ fun SvgViewer(
                             (tap.y - center.y - translation.y) / scale + center.y
                         )
 
-                        // ✅ Avoid creating hotspot near (0,0) or invalid coordinates
+                        //  Avoid creating hotspot near (0,0) or invalid coordinates
                         if (corrected.x > 10f && corrected.y > 10f) {
                             onTap(corrected)
                         }
@@ -103,7 +103,7 @@ fun SvgViewer(
                     }
             )
 
-            // 🔹 Dynamic Hotspots colored by completion state
+            //  Dynamic Hotspots colored by completion state
             hotspots.forEach { h ->
                 val color = when (h.getCompletionState()) {
                     CompletionState.COMPLETE -> Color(0xFF4CAF50) // 🟢 Green
@@ -131,9 +131,7 @@ fun SvgViewer(
     }
 }
 
-/**
- * Extension function for Hotspot to determine its completion state.
- */
+
 fun Hotspot.getCompletionState(): CompletionState {
     val hasName = !name.isNullOrBlank()
     val hasDescription = !description.isNullOrBlank()

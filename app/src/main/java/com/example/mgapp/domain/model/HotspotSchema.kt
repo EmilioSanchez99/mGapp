@@ -6,13 +6,13 @@ enum class FieldType {
     TEXT, NUMBER, DATE, DROPDOWN, CHECKBOX
 }
 
-// Reglas de validación por campo
+// Validation rules
 data class ValidationRule(
     val required: Boolean = false,
-    val min: Double? = null,        // min length o valor mínimo
-    val max: Double? = null,        // max length o valor máximo
-    val regex: String? = null,      // validación por patrón (ej: email)
-    val options: List<String>? = null // opciones válidas (dropdown)
+    val min: Double? = null,        // min length
+    val max: Double? = null,        // max length
+    val regex: String? = null,      // pattern
+    val options: List<String>? = null // (dropdown)
 )
 
 data class FieldSchema(

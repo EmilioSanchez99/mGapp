@@ -38,7 +38,6 @@ fun HotspotListScreen(
         else hotspots.filter { it.getCompletionState() == filter }
     }
 
-    // ✅ Cargar strings de accesibilidad fuera de semantics{}
     val topBarDescription = stringResource(R.string.cd_title_hotspot_list)
     val listDescription = stringResource(R.string.cd_hotspot_list)
     val filterRowDescription = stringResource(R.string.cd_filter_row)
@@ -65,7 +64,7 @@ fun HotspotListScreen(
                 .padding(16.dp)
                 .semantics { contentDescription = listDescription }
         ) {
-            // 🔹 Filtros
+            // 🔹 filters
             Row(
                 modifier = Modifier
                     .fillMaxWidth()
@@ -123,17 +122,17 @@ fun HotspotCard(
     val (icon, color, label) = when (state) {
         CompletionState.COMPLETE -> Triple(
             Icons.Default.CheckCircle,
-            Color(0xFF4CAF50), // 🟢 Green
+            Color(0xFF4CAF50), //  Green
             stringResource(R.string.label_complete)
         )
         CompletionState.PARTIAL -> Triple(
             Icons.Default.Warning,
-            Color(0xFFFFC107), // 🟡 Yellow
+            Color(0xFFFFC107), //  Yellow
             stringResource(R.string.label_partial)
         )
         CompletionState.EMPTY -> Triple(
             Icons.Default.RadioButtonUnchecked,
-            Color(0xFF9E9E9E), // ⚪ Grey
+            Color(0xFF9E9E9E), //  Grey
             stringResource(R.string.label_empty)
         )
     }

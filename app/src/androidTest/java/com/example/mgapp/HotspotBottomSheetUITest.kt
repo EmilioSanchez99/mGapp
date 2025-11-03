@@ -16,7 +16,6 @@ class HotspotBottomSheetUITest {
     @Test
     fun bottomSheet_displaysBasicFields() {
         composeRule.setContent {
-            // ⚠️ Usa la versión sin Hilt
             HotspotBottomSheetPreviewable()
         }
 

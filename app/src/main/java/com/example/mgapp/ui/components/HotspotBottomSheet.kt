@@ -40,7 +40,7 @@ fun HotspotBottomSheet(
 
     val formState = viewModel.formState.value
 
-    // ✅ Cargar todos los textos de accesibilidad fuera de semantics{}
+
     val sheetDescription = if (hotspot.name.isEmpty())
         stringResource(R.string.cd_bottomsheet_create)
     else
@@ -81,7 +81,7 @@ fun HotspotBottomSheet(
 
             Spacer(Modifier.height(16.dp))
 
-            // 🔹 Campo nombre
+            // name field
             OutlinedTextField(
                 value = name,
                 singleLine = true,
@@ -104,7 +104,7 @@ fun HotspotBottomSheet(
 
             Spacer(Modifier.height(8.dp))
 
-            // 🔹 Campo descripción
+            // description field
             OutlinedTextField(
                 value = description,
                 singleLine = true,
@@ -127,7 +127,7 @@ fun HotspotBottomSheet(
 
             Spacer(Modifier.height(24.dp))
 
-            // 🔹 Botones principales (Delete / Cancel / Save)
+            // Buttons (Delete / Cancel / Save)
             Row(
                 modifier = Modifier
                     .fillMaxWidth()
@@ -198,7 +198,6 @@ fun HotspotBottomSheetPreviewable(
     onDismiss: () -> Unit = {},
     onSave: () -> Unit = {}
 ) {
-    // ✅ también cargamos los strings aquí fuera
     val previewDescription = stringResource(R.string.cd_preview_hotspot)
     val savePreviewDescription = stringResource(R.string.cd_button_preview_save)
     val cancelPreviewDescription = stringResource(R.string.cd_button_preview_cancel)

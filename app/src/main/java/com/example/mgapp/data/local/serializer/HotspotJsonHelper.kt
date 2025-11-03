@@ -31,7 +31,7 @@ object HotspotJsonHelper {
         ignoreUnknownKeys = true
     }
 
-    // 🔹 Exportar todos los hotspots a un archivo JSON
+    // 🔹 Export  hotspots TO JSON
     fun exportToJson(context: Context, hotspots: List<HotspotEntity>) {
         val list = hotspots.map {
             HotspotSerializable(it.id, it.x, it.y, it.name, it.description)
@@ -61,7 +61,7 @@ object HotspotJsonHelper {
     }
 
 
-    // 🔹 Importar hotspots desde JSON
+    // 🔹 Import hotspots from JSON
     fun importFromJson(context: Context): List<HotspotEntity> {
         val file = File(context.getExternalFilesDir(null), FILE_NAME)
         if (!file.exists()) return emptyList()

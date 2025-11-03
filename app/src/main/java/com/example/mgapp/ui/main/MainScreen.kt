@@ -50,14 +50,13 @@ fun MainScreen(viewModel: HotspotViewModel = hiltViewModel()) {
 
     val snackbarHostState = remember { SnackbarHostState() }
 
-    // Escuchar mensajes del ViewModel (Saved, Deleted, etc.)
     LaunchedEffect(Unit) {
         viewModel.uiMessage.collect { msg ->
             snackbarHostState.showSnackbar(message = msg)
         }
     }
 
-    // 🔹 Launcher para importar JSON
+    //  JSON launcher
     val importLauncher = rememberLauncherForActivityResult(
         contract = ActivityResultContracts.OpenDocument(),
         onResult = { uri: Uri? ->
@@ -68,8 +67,7 @@ fun MainScreen(viewModel: HotspotViewModel = hiltViewModel()) {
         }
     )
 
-    // 🔹 Snackbar personalizado
-    // 🔹 Snackbar personalizado accesible
+    //  Snackbar
     @Composable
     fun CustomSnackbar(data: SnackbarData) {
         val message = data.visuals.message.lowercase()
@@ -109,9 +107,7 @@ fun MainScreen(viewModel: HotspotViewModel = hiltViewModel()) {
     }
 
 
-    // ===========================================================
-    // 🔹 Estructura principal con pestañas
-    // ===========================================================
+    //tabs
     Scaffold(
         snackbarHost = {
             SnackbarHost(hostState = snackbarHostState) { data ->
@@ -119,9 +115,7 @@ fun MainScreen(viewModel: HotspotViewModel = hiltViewModel()) {
             }
         },
         topBar = {
-            // ===========================================================
-// 🔹 Toolbar con contentDescription accesibles
-// ===========================================================
+
             TopAppBar(
                 title = { Text(stringResource(R.string.title_main_screen)) },
                 actions = {
@@ -172,7 +166,7 @@ fun MainScreen(viewModel: HotspotViewModel = hiltViewModel()) {
     ) { padding ->
 
         Column(modifier = Modifier.padding(padding)) {
-            // 🔸 Pestañas superiores
+            // tabs
             TabRow(selectedTabIndex = selectedTab) {
                 Tab(
                     selected = selectedTab == 0,
@@ -188,7 +182,7 @@ fun MainScreen(viewModel: HotspotViewModel = hiltViewModel()) {
 
             when (selectedTab) {
                 0 -> {
-                    // 🗺️ SVG Viewer
+                    // 🗺 SVG Viewer
                     SvgViewer(
                         svgPath = "file:///android_asset/dekra.svg",
                         hotspots = hotspots,
@@ -205,7 +199,7 @@ fun MainScreen(viewModel: HotspotViewModel = hiltViewModel()) {
                 }
 
                 1 -> {
-                    // 📋 Lista general
+                    // List
                     HotspotListScreen(
                         viewModel = viewModel,
                         onEditHotspot = { hotspotEntity ->
@@ -222,9 +216,8 @@ fun MainScreen(viewModel: HotspotViewModel = hiltViewModel()) {
             }
         }
 
-        // ===========================================================
-        // 🔹 BottomSheets
-        // ===========================================================
+        // BottomSheets
+
         pendingHotspot?.let { hotspot ->
             HotspotBottomSheet(
                 hotspot = hotspot,
@@ -291,9 +284,7 @@ fun MainScreen(viewModel: HotspotViewModel = hiltViewModel()) {
             )
         }
 
-        // ===========================================================
-        // 🔹 Diálogo de confirmación (borrar todo)
-        // ===========================================================
+    //delete all confirm dialog
         if (showConfirmDialog) {
             if (hotspots.isEmpty()) {
                 Toast.makeText(context, stringResource(R.string.toast_no_hotspots), Toast.LENGTH_SHORT).show()

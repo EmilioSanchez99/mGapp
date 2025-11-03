@@ -29,9 +29,7 @@ class HotspotViewModel @Inject constructor(
     private val repository: HotspotRepository
 ) : ViewModel() {
 
-    // ===========================================================
-    // 🔁 UNDO / REDO
-    // ===========================================================
+   // UNDO / REDO
 
     private val undoStack = ArrayDeque<HotspotChange>()
     private val redoStack = ArrayDeque<HotspotChange>()
@@ -48,16 +46,13 @@ class HotspotViewModel @Inject constructor(
 
     private fun emitUiMessage(msg: String) = _uiMessage.tryEmit(msg)
 
-    // ===========================================================
-    // 🌐 FLUJO PRINCIPAL DE HOTSPOTS
-    // ===========================================================
+
 
     val hotspots = repository.getAllHotspots()
         .stateIn(viewModelScope, SharingStarted.Lazily, emptyList())
 
-    // ===========================================================
-    // 🔁 GESTIÓN DE CAMBIOS
-    // ===========================================================
+    // changes management
+
 
     fun applyChange(change: HotspotChange, context: Context) = viewModelScope.launch {
         when (change) {
@@ -121,9 +116,9 @@ class HotspotViewModel @Inject constructor(
         _canRedo.value = redoStack.isNotEmpty()
     }
 
-    // ===========================================================
-    // 💾 CRUD DIRECTO
-    // ===========================================================
+
+    // CRUD DIRECTO
+
 
     fun saveHotspot(h: HotspotEntity) = viewModelScope.launch {
         repository.saveHotspot(h)
@@ -137,9 +132,7 @@ class HotspotViewModel @Inject constructor(
         repository.clearAll()
     }
 
-    // ===========================================================
-    // 📤 EXPORTAR / 📥 IMPORTAR JSON
-    // ===========================================================
+    // export - import JSON
 
     fun exportHotspots(context: Context) = viewModelScope.launch {
         val current = hotspots.value
@@ -169,14 +162,12 @@ class HotspotViewModel @Inject constructor(
         emitUiMessage(context.getString(R.string.import_from_file))
     }
 
-    // ===========================================================
-    // 🧩 VALIDACIÓN DE FORMULARIOS
-    // ===========================================================
+    // Form validation
 
     private val _formState: MutableState<FormUiState> = mutableStateOf(FormUiState())
     val formState: MutableState<FormUiState> = _formState
 
-    // 👇 Este esquema puede venir de tu JSON o definirse aquí para pruebas
+
     private val currentSchema = HotspotSchema(
         hotspotId = "default",
         fields = listOf(
@@ -239,7 +230,7 @@ class HotspotViewModel @Inject constructor(
 
             repository.saveHotspot(
                 HotspotEntity(
-                    id = 0, // autogenerado
+                    id = 0,
                     x = 0f,
                     y = 0f,
                     name = name,
