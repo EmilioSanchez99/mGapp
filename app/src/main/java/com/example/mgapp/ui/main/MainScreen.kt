@@ -69,15 +69,16 @@ fun MainScreen(viewModel: HotspotViewModel = hiltViewModel()) {
     )
 
     // 🔹 Snackbar personalizado
+    // 🔹 Snackbar personalizado accesible
     @Composable
     fun CustomSnackbar(data: SnackbarData) {
         val message = data.visuals.message.lowercase()
-        val (icon, tint) = when {
-            "eliminado" in message -> Icons.Default.Delete to MaterialTheme.colorScheme.error
-            "saved" in message -> Icons.Default.Check to MaterialTheme.colorScheme.primary
-            "undo" in message -> Icons.AutoMirrored.Filled.Undo to MaterialTheme.colorScheme.tertiary
-            "redo" in message -> Icons.AutoMirrored.Filled.Redo to MaterialTheme.colorScheme.secondary
-            else -> Icons.Default.Info to MaterialTheme.colorScheme.outline
+        val (icon, tint, cd) = when {
+            "eliminado" in message -> Triple(Icons.Default.Delete, MaterialTheme.colorScheme.error, stringResource(R.string.cd_snackbar_deleted))
+            "saved" in message -> Triple(Icons.Default.Check, MaterialTheme.colorScheme.primary, stringResource(R.string.cd_snackbar_saved))
+            "undo" in message -> Triple(Icons.AutoMirrored.Filled.Undo, MaterialTheme.colorScheme.tertiary, stringResource(R.string.cd_snackbar_undo))
+            "redo" in message -> Triple(Icons.AutoMirrored.Filled.Redo, MaterialTheme.colorScheme.secondary, stringResource(R.string.cd_snackbar_redo))
+            else -> Triple(Icons.Default.Info, MaterialTheme.colorScheme.outline, stringResource(R.string.cd_snackbar_info))
         }
 
         Surface(
@@ -93,7 +94,7 @@ fun MainScreen(viewModel: HotspotViewModel = hiltViewModel()) {
             ) {
                 Icon(
                     imageVector = icon,
-                    contentDescription = null,
+                    contentDescription = cd,
                     tint = tint,
                     modifier = Modifier.size(24.dp)
                 )
@@ -107,6 +108,7 @@ fun MainScreen(viewModel: HotspotViewModel = hiltViewModel()) {
         }
     }
 
+
     // ===========================================================
     // 🔹 Estructura principal con pestañas
     // ===========================================================
@@ -117,26 +119,55 @@ fun MainScreen(viewModel: HotspotViewModel = hiltViewModel()) {
             }
         },
         topBar = {
+            // ===========================================================
+// 🔹 Toolbar con contentDescription accesibles
+// ===========================================================
             TopAppBar(
                 title = { Text(stringResource(R.string.title_main_screen)) },
                 actions = {
-                    IconButton(onClick = { viewModel.exportHotspots(context) }) {
-                        Icon(Icons.Filled.Download, contentDescription = stringResource(R.string.export_json))
+                    IconButton(
+                        onClick = { viewModel.exportHotspots(context) }
+                    ) {
+                        Icon(
+                            Icons.Filled.Download,
+                            contentDescription = stringResource(R.string.cd_export_json)
+                        )
                     }
-                    IconButton(onClick = { importLauncher.launch(arrayOf("application/json")) }) {
-                        Icon(Icons.Filled.Upload, contentDescription = stringResource(R.string.import_json))
+                    IconButton(
+                        onClick = { importLauncher.launch(arrayOf("application/json")) }
+                    ) {
+                        Icon(
+                            Icons.Filled.Upload,
+                            contentDescription = stringResource(R.string.cd_import_json)
+                        )
                     }
                     IconButton(onClick = { showConfirmDialog = true }) {
-                        Icon(Icons.Default.Delete, contentDescription = stringResource(R.string.delete_all))
+                        Icon(
+                            Icons.Default.Delete,
+                            contentDescription = stringResource(R.string.cd_delete_all)
+                        )
                     }
-                    IconButton(onClick = { viewModel.undo(context) }, enabled = canUndo) {
-                        Icon(Icons.AutoMirrored.Filled.Undo, contentDescription = stringResource(R.string.undo))
+                    IconButton(
+                        onClick = { viewModel.undo(context) },
+                        enabled = canUndo
+                    ) {
+                        Icon(
+                            Icons.AutoMirrored.Filled.Undo,
+                            contentDescription = stringResource(R.string.cd_undo)
+                        )
                     }
-                    IconButton(onClick = { viewModel.redo(context) }, enabled = canRedo) {
-                        Icon(Icons.AutoMirrored.Filled.Redo, contentDescription = stringResource(R.string.redo))
+                    IconButton(
+                        onClick = { viewModel.redo(context) },
+                        enabled = canRedo
+                    ) {
+                        Icon(
+                            Icons.AutoMirrored.Filled.Redo,
+                            contentDescription = stringResource(R.string.cd_redo)
+                        )
                     }
                 }
             )
+
         }
     ) { padding ->
 
@@ -275,11 +306,12 @@ fun MainScreen(viewModel: HotspotViewModel = hiltViewModel()) {
                     icon = {
                         Icon(
                             imageVector = Icons.Filled.Delete,
-                            contentDescription = null,
+                            contentDescription = stringResource(R.string.cd_dialog_delete_icon),
                             tint = MaterialTheme.colorScheme.error,
                             modifier = Modifier.size(48.dp)
                         )
-                    },
+                    }
+                    ,
                     title = { Text(stringResource(R.string.dialog_title_confirm_delete), style = MaterialTheme.typography.titleLarge) },
                     text = {
                         Text(

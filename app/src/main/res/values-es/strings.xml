@@ -88,4 +88,45 @@
     <string name="label_empty">Vacío</string>
     <string name="label_no_name">Sin nombre</string>
 
+    <!-- Accessibility (MainScreen) -->
+    <string name="cd_export_json">Exportar archivo JSON</string>
+    <string name="cd_import_json">Importar archivo JSON</string>
+    <string name="cd_delete_all">Eliminar todos los hotspots</string>
+    <string name="cd_undo">Deshacer último cambio</string>
+    <string name="cd_redo">Rehacer último cambio</string>
+    <string name="cd_snackbar_deleted">Icono de eliminado</string>
+    <string name="cd_snackbar_saved">Icono de guardado</string>
+    <string name="cd_snackbar_undo">Icono de deshacer</string>
+    <string name="cd_snackbar_redo">Icono de rehacer</string>
+    <string name="cd_snackbar_info">Icono de información</string>
+    <string name="cd_dialog_delete_icon">Icono de confirmación de borrado</string>
+
+    <!-- Accesibilidad / contentDescription -->
+    <string name="cd_bottomsheet_create">Hoja inferior para crear un nuevo hotspot</string>
+    <string name="cd_bottomsheet_edit">Hoja inferior para editar el hotspot %1$s</string>
+    <string name="cd_title_new_hotspot">Título: nuevo hotspot</string>
+    <string name="cd_title_edit_hotspot">Título: editar hotspot %1$s</string>
+    <string name="cd_field_name">Campo de texto: nombre del hotspot</string>
+    <string name="cd_field_description">Campo de texto: descripción del hotspot</string>
+    <string name="cd_button_delete_hotspot">Botón eliminar hotspot</string>
+    <string name="cd_button_cancel">Botón cancelar</string>
+    <string name="cd_button_save_hotspot">Botón guardar hotspot</string>
+    <string name="cd_preview_hotspot">Vista previa del formulario de hotspot</string>
+    <string name="cd_button_preview_save">Botón guardar en vista previa</string>
+    <string name="cd_button_preview_cancel">Botón cancelar en vista previa</string>
+
+    <!-- Accesibilidad HotspotListScreen -->
+    <string name="cd_title_hotspot_list">Lista general de hotspots</string>
+    <string name="cd_hotspot_list">Pantalla con la lista de hotspots</string>
+    <string name="cd_filter_row">Controles de filtro por estado</string>
+    <string name="cd_filter_all">Mostrar todos los hotspots</string>
+    <string name="cd_filter_complete">Mostrar solo los hotspots completos</string>
+    <string name="cd_filter_partial">Mostrar solo los hotspots parciales</string>
+    <string name="cd_filter_empty">Mostrar solo los hotspots vacíos</string>
+    <string name="cd_hotspot_list_container">Contenedor de la lista de hotspots</string>
+    <string name="cd_hotspot_card">Tarjeta del hotspot %1$s, estado: %2$s</string>
+
+
+
+
 </resources>
